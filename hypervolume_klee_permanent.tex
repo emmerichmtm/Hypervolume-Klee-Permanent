@@ -5,6 +5,7 @@
 \usepackage[a4paper,margin=25mm]{geometry}
 \usepackage{amsmath,amssymb,amsthm,mathtools}
 \usepackage{microtype}
+\usepackage{graphicx}
 \usepackage{booktabs,tabularx,array}
 \usepackage{enumitem}
 \usepackage{xcolor}
@@ -15,17 +16,10 @@
  pdfauthor={Michael T.M. Emmerich},
  pdfkeywords={hypervolume indicator, Klee measure problem, permanent, arithmetic complexity, CC BY 4.0},
  pdfsubject={Self-contained reductions, binary counting hardness, Klee measure, and magnitude}]{hyperref}
-\usepackage{fancyhdr}
-\pagestyle{fancy}
-\fancyhf{}
-\fancyhead[L]{\small Hypervolume Indicator and Klee Measure Problem}
-\fancyhead[R]{\small 25 November 2026}
-\fancyfoot[C]{\thepage}
-\setlength{\headheight}{15pt}
+\pagestyle{plain}
 \setlength{\parskip}{0.25em}
 \setlength{\emergencystretch}{2em}
 \setlist{itemsep=0.25em,topsep=0.4em}
-\setcounter{tocdepth}{1}
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{proposition}[theorem]{Proposition}
@@ -51,19 +45,15 @@
 
 \title{Hypervolume Indicator and\\
 Klee Measure Problem\\
-through the Permanent\\[0.3em]
-\large Arithmetic Lower Bounds and Their Scope}
-\author{Michael T.M. Emmerich\\[0.35em]
+through the Permanent}
+\author{Michael T.M. Emmerich\thanks{\textcopyright\ 2026 Michael T.M. Emmerich.
+Licensed under \href{https://creativecommons.org/licenses/by/4.0/}{CC BY 4.0}.}\\[0.35em]
 \normalsize Faculty of Information Technology\\
 \normalsize University of Jyv\"askyl\"a}
 \date{25 November 2026}
 
 \begin{document}
 \maketitle
-\begin{center}
-\small\textcopyright\ 2026 Michael T.M. Emmerich.\\
-\href{https://creativecommons.org/licenses/by/4.0/}{Creative Commons Attribution 4.0 International (CC BY 4.0)}
-\end{center}
 
 \begin{abstract}
 The Hypervolume Indicator is the volume of a union of boxes anchored at
@@ -78,38 +68,67 @@ no polynomial-size arithmetic circuits; the obstruction also applies
 to exact Klee-measure computation in the stated arithmetic model.
 We relate this construction to earlier counting and algebraic results,
 explain the reverse reduction for rational inputs, and give exact
-connections with ordinary $\ell_1$ magnitude. A recent preprint by
-Claude (Anthropic) claims $\VP\ne\VNP$; its status and stronger
-quantitative claim are discussed separately.
+connections with ordinary $\ell_1$ magnitude. A recent announcement
+of $\VP\ne\VNP$ remains in preprint status \cite{Claude2026};
+the lower-bound results here are conditional.
 \end{abstract}
 
-\clearpage
-\section*{Reading guide}
-\addcontentsline{toc}{section}{Reading guide}
-The reduction is unconditional. Excluding polynomial-size arithmetic
-circuits assumes $\VP_{\R}\ne\VNP_{\R}$.
-\begin{itemize}
- \item \textbf{Definitions and prior work:}
- Sections~\ref{sec:models}--\ref{sec:directions} explain the models
- and both directions of reduction.
- \item \textbf{Main argument:}
- Sections~\ref{sec:construction}--\ref{sec:transfer} give the construction,
- example, and lower-bound transfer.
- \item \textbf{Consequences and limits:}
- Sections~\ref{sec:magnitude}--\ref{sec:discussion} cover magnitude,
- algorithms, approximation, and novelty.
- \item \textbf{Proof details:} Appendices A--F contain supporting arguments
- and reference checks.
-\end{itemize}
-\begingroup
-\small
-\setlength{\parskip}{0pt}
-\tableofcontents
-\endgroup
-\clearpage
-
-\section{The objects and the computational models}
+\section{Introduction}
 \label{sec:models}
+
+In two dimensions, the Klee Measure Problem asks for the area covered
+by finitely many axis-aligned rectangles. A point covered by several
+rectangles contributes to the area only once. In higher dimensions,
+rectangles are replaced by boxes and area by volume.
+
+The Hypervolume Indicator is a special case. All boxes have one common
+corner, called the reference point. For maximization, each opposite
+corner is an objective vector, and the union is the region dominated
+by at least one of these vectors. Figure~\ref{fig:boxes} shows both
+constructions. Their similarity is useful: an algorithm for arbitrary
+boxes also applies to anchored boxes.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{figures/klee_hypervolume_2d.pdf}
+\caption{Two-dimensional instances. Left: Klee measure is the area of
+the union of arbitrary axis-aligned rectangles. Right: for maximization,
+the Hypervolume Indicator is the area of rectangles joining the
+reference point $0$ to the objective vectors $p^1,p^2,p^3$.
+The shaded union counts each overlap once.}
+\label{fig:boxes}
+\end{figure}
+
+The role of the dimension requires some care. When it is fixed, exact
+algorithms can have running time polynomial in the number of boxes.
+When the dimension is part of the input, Bringmann and Friedrich
+\cite{BringmannFriedrich} establish counting hardness even for anchored
+boxes with coordinates in $\{1,2\}$. The present paper concerns a
+related algebraic question. We consider computations formed from
+additions and multiplications, allowing intermediate results to be
+reused, and ask whether their size can be polynomially bounded.
+
+The connection is made through the permanent. We construct a union of
+anchored boxes for which the part of an enclosing box left uncovered
+represents matchings in a bipartite graph. A parameter $t$ records the
+size of a matching. The residual volume is therefore a polynomial in
+$t$, and its coefficient of highest possible degree is the permanent.
+The row--column conflict graph and its partial-permanent polynomial
+are due to Briquel and Koiran \cite{BriquelKoiran2009}. Here this
+algebraic construction is realized by positive-coordinate boxes.
+
+For an $r\times r$ matrix, the construction uses $r^2(r-1)$ boxes in
+$r^2$ dimensions. The permanent is recovered from $r+1$ hypervolume
+evaluations by interpolation. This reduction is unconditional.
+Assuming $\VP_{\R}\ne\VNP_{\R}$, it follows that the constructed
+hypervolume family has no polynomial-size arithmetic circuits. The
+same conclusion applies to exact Klee measure in the stated model.
+We also give the reverse reduction for rational inputs in the bit
+model, and corresponding identities for ordinary $\ell_1$ magnitude.
+The proofs are self-contained apart from the cited counting and
+algebraic completeness theorems.
+
+\subsection{Definitions and computational models}
 
 For maximization, let $P=\{p^1,\ldots,p^n\}\subseteq\R_{\ge0}^d$ and use
 the reference point $0=(0,\ldots,0)$. Write
@@ -152,7 +171,7 @@ variables or constants. An arithmetic oracle reduction, also called a
 \emph{c-reduction}, additionally permits polynomially many oracle
 evaluations and arithmetic operations. Our reduction uses the latter.
 
-\section{Binary entries do not mean arithmetic modulo two}
+\section{The permanent and the underlying field}
 \label{sec:binary}
 
 The permanent of an $r\times r$ matrix is
@@ -189,26 +208,25 @@ The circuit must compute \eqref{eq:permanent} as a polynomial identity.
 Agreement only on zero--one inputs is weaker: $x^2$ and $x$ agree on
 $\{0,1\}$ but are distinct polynomials. Converting an arbitrary circuit
 correct on the Boolean cube into a circuit for its multilinear extension
-is not a free operation. Consequently, a formal-polynomial
-lower bound does not, by itself, prove a lower bound for every algorithm
-promised only zero--one inputs. This restriction is \emph{different}
-from the characteristic-two exception.
+requires a separate complexity argument. A lower bound for the formal
+polynomial therefore does not by itself give a lower bound for every
+algorithm whose inputs are restricted to zero--one matrices. This
+input restriction and the choice of characteristic are separate issues.
 
 For our transfer, it suffices that an arithmetic circuit is correct for
 all positive real parameters: two real polynomials agreeing on a
 nonempty open set are identical. Positivity therefore causes no loss in
 the formal-polynomial reduction.
 
-\section{What Bringmann--Friedrich already prove}
+\section{Counting complexity of hypervolume}
 \label{sec:bf}
 
 Bringmann and Friedrich prove $\#\mathrm P$ hardness using boxes anchored
 at the origin with upper corners in $\{1,2\}^d$
 \cite[Theorem 1]{BringmannFriedrich}. This is already a hardness proof for
-the hypervolume indicator when $d$ is part of the input. Calling it only
-``binary NP hardness'' obscures its counting content.
+the hypervolume indicator when $d$ is part of the input.
 
-The encoding can be checked directly. For a monotone CNF
+The reduction has the following form. For a monotone CNF
 $F(x)=\bigwedge_C\bigvee_{i\in C}x_i$, introduce a corner
 \[
  p^C_i=\begin{cases}1,&i\in C,\\2,&i\notin C.\end{cases}
@@ -257,7 +275,7 @@ not establish an arithmetic circuit lower bound. Conversely, a formal
 arithmetic lower bound alone does not settle the complexity of arbitrary
 bit algorithms.
 
-\section{Both directions of reduction and the prior algebraic construction}
+\section{Reductions and related algebraic constructions}
 \label{sec:directions}
 
 \subsection{Klee measure reduces to the permanent in the bit model}
@@ -277,9 +295,10 @@ $z\in\prod_i\{0,\ldots,B_i-1\}$. A cell is covered precisely when
 its index satisfies $\ell_i\le z_i<u_i$ on every axis for at least one
 scaled input box.
 
-Guess the binary encoding of $z$ once and accept precisely when this
-test succeeds. Do not guess a covering box: overlapping boxes must not
-create multiple accepting witnesses for the same cell. The guessed
+The nondeterministic computation guesses the binary encoding of $z$
+and accepts precisely when this test succeeds. Thus there is one
+accepting witness for each covered cell, even if that cell belongs to
+several boxes. The guessed
 vector has polynomially many bits, and the test takes polynomial time.
 The denominator products and scaled endpoints also have polynomial
 bit length. Empty input and zero-volume bounding boxes return zero
@@ -292,9 +311,9 @@ This establishes
  \text{rational Klee measure}\ \le_T^{\mathrm{poly}}\
  \text{integer permanent}.
 \]
-It is a bit-model consequence of a published completeness theorem,
-not a claimed new complexity classification. It does not give a global
-arithmetic-circuit representation for arbitrary real box coordinates.
+This bit-model reduction uses counting completeness. A global
+arithmetic-circuit representation for arbitrary real box coordinates
+requires a different argument.
 
 \subsection{The opposite direction and its role in lower bounds}
 
@@ -304,7 +323,7 @@ from the zero--one permanent to anchored Klee measure. This does not
 by itself transfer lower bounds for \emph{formal polynomials}.
 For that purpose, Section~\ref{sec:construction} realizes a weighted
 polynomial on a positive open domain and Section~\ref{sec:transfer}
-uses arithmetic interpolation. The directions should be kept distinct:
+uses arithmetic interpolation. More precisely, the two steps are
 \[
  \begin{aligned}
  \text{permanent polynomial}&\ \le_c\ H_r,\\
@@ -315,7 +334,7 @@ uses arithmetic interpolation. The directions should be kept distinct:
 Here the last symbol denotes an inclusion of geometric instances,
 not an assertion that unrestricted Klee measure is one polynomial.
 
-\subsection{A documented antecedent: the partial permanent}
+\subsection{The partial permanent}
 
 Briquel and Koiran \cite[Section 3, Theorems 3 and 5]{BriquelKoiran2009}
 use a graph with one vertex for each position of an $r\times r$ matrix
@@ -327,10 +346,8 @@ is exactly our residual $Q_r(A,t)$.
 
 The additional step here is its geometric realization as the ambient
 box volume minus the union volume of the explicit positive boxes in
-\eqref{eq:corners}. We prove that step directly. The conflict graph and
-the partial-permanent polynomial are therefore credited as prior work;
-the discussion in Section~\ref{sec:discussion} distinguishes this
-antecedent from the specific geometric corollary.
+\eqref{eq:corners}. We prove that step directly. The geometric construction thus extends the algebraic formulation
+of Briquel and Koiran.
 
 \section{Encoding matchings by a hypervolume residual}
 \label{sec:construction}
@@ -369,6 +386,10 @@ Define the ambient box and the queried hypervolume by
  H_r(A,t)=\HV_{r^2}(\{p^c(A,t):c\in\conf\}).
 \]
 
+The ambient volume is a product of $r^2$ linear factors. Its difference
+from $H_r$ measures the uncovered part of $C(A,t)$. The following
+identity identifies this difference explicitly.
+
 \begin{theorem}[Matching polynomial as residual volume]
 \label{thm:matching}
 For all positive $A,t$,
@@ -405,19 +426,20 @@ matching. These matchings correspond to permutations, giving
 \eqref{eq:coefficient}.
 \end{proof}
 
-The boxes deliberately cover \emph{invalid} selections; their complement
-inside the finite ambient box encodes valid matchings. This complement
-is an auxiliary set in the reduction. The measured hypervolume itself
-is always the union of dominated boxes.
+Thus a cell is covered precisely when its selected positions contain
+a conflicting pair. The uncovered cells correspond to matchings.
+The subtraction from the ambient volume is the step that passes from
+these excluded selections to the matching polynomial; the hypervolume
+query itself still measures the union of anchored boxes.
 
-\paragraph{Why this is a polynomial despite geometric comparisons.}
+\paragraph{Polynomial dependence on the parameters.}
 General hypervolume is piecewise polynomial in its corner coordinates.
 Here every coordinate has two levels in a fixed order,
 $ta_e<1+ta_e$, on the whole positive parameter domain.
 Equation~\eqref{eq:matching} therefore identifies $H_r$ with a single
-polynomial in $A,t$. In the rest of the report, $H_r$ denotes that
+polynomial in $A,t$. In the remainder, $H_r$ denotes that
 polynomial as well as its geometric evaluation on positive parameters.
-The degree bounds must be distinguished:
+For interpolation, it is useful to record the degree bounds separately:
 \begin{equation}
  \deg_t H_r\le r^2,\qquad \deg_{A,t}H_r\le2r^2,
  \qquad \deg_t Q_r\le r.
@@ -479,11 +501,13 @@ then
 \end{equation}
 \end{lemma}
 
-This is the $r$th forward difference at $1$, divided by $r!$; a proof
-is in Appendix~\ref{app:interpolation}. All query points are positive,
+The formula is the $r$th forward difference at $1$, divided by $r!$.
+Successive differences remove all terms of degree below $r$; the term
+$t^r$ contributes $r!$. Appendix~\ref{app:interpolation} gives the
+details. All query points are positive,
 and the rational coefficients are permitted circuit constants. The
-formula introduces no division gates. We do not assert this particular
-interpolation reduction in finite characteristic.
+formula introduces no division gates. This argument is stated in
+characteristic zero, where the required factorials are nonzero.
 
 \begin{theorem}[Unconditional circuit reduction]
 \label{thm:transfer}
@@ -545,14 +569,13 @@ measure and hypervolume. The class-separation assumption alone gives
 no particular numerical superpolynomial rate; a stronger quantitative
 premise is considered only in the discussion.
 
-\paragraph{Two useful refinements.}
+\paragraph{General position and completeness.}
 Appendix~\ref{app:general-position} removes same-axis coordinate ties
 with polynomially many evaluations. Appendix~\ref{app:vnp} proves that
 $(H_r)$ is itself $\VNP$-complete under c-reductions in characteristic
-zero. We make no claim of completeness under projections for this
-particular family.
+zero.
 
-\section{Ordinary \texorpdfstring{$\ell_1$}{l1} magnitude and the same obstruction}
+\section{Ordinary \texorpdfstring{$\ell_1$}{l1} magnitude}
 \label{sec:magnitude}
 
 Equip $D(P)$ with the distance
@@ -585,7 +608,7 @@ for the empty set the magnitude is zero. Appendix~\ref{app:magnitude}
 gives a direct proof from the kernel, including the case of zero-length
 box sides.
 
-\subsection{What the Dirac masses do}
+\subsection{The product measure and its projection terms}
 
 The measure $\delta_0$ assigns mass one to the point $0$ and zero to
 sets not containing $0$. For example,
@@ -702,7 +725,7 @@ be downward closed. Also $R_r\ne Q_r$: in the earlier numerical example,
 $R_2(A,t)=7+34t+29t^2$, whereas $Q_2(A,t)=1+17t+29t^2$.
 Their common leading coefficient is the permanent.
 
-\section{What this forces in a symbolic implementation}
+\section{Consequences for symbolic representations}
 \label{sec:primitives}
 
 Suppose a symbolic scheme evaluates $H_r$ exactly on the constructed
@@ -729,7 +752,7 @@ absorbed by construction or evaluation. A single object storing an
 unevaluated integral or an oracle for a hard polynomial is not a
 constant-cost arithmetic primitive.
 
-\paragraph{Comparisons need a precise treatment.}
+\paragraph{Arithmetic comparison algorithms.}
 A uniformly bounded arithmetic algorithm using addition, subtraction,
 multiplication and comparisons on positive real inputs has a branch
 valid on an open region. Freezing that branch produces a polynomial
@@ -740,21 +763,10 @@ output degree. Thus comparisons and divisions do not avoid the stated
 superpolynomial obstruction. For counts of rational operations, this
 simulation inserts a polynomial factor into
 \eqref{eq:primitive-upper}, which does not change
-\eqref{eq:primitive-lower}. No transfer to arbitrary word-RAM operations,
-bit packing or floor operations is being claimed.
+\eqref{eq:primitive-lower}. Operations such as bit packing and integer
+rounding require a different simulation and are outside this argument.
 
-\paragraph{A local closure lemma is a different assertion.}
-The result does not refute a fixed-dimensional rule of the form
-$S'\le C_dS$. That bound must still be proved or disproved for its
-specified primitive class. Even if it holds locally, after $L$ uses
-the bound is $S_L\le C_d^L S_0$; the dependence of $C_d$ on $d$, the
-number of uses, sharing, preprocessing, and evaluation all matter.
-The permanent reduction identifies an obstruction to a complete scheme
-with polynomial cost in both $n$ and $d$. It supplies neither a
-counterexample to a particular four-dimensional closure lemma nor a
-proof of that lemma.
-
-\section{Upper bounds, approximation, and the limits of the conclusion}
+\section{Exact algorithms and approximation}
 \label{sec:limits}
 
 \subsection{Exact algorithms and fixed dimension}
@@ -768,7 +780,7 @@ from inclusion--exclusion:
 \end{equation}
 Computing each subset's coordinatewise minimum from a smaller subset
 gives $O(d2^n)$ arithmetic/comparison operations, after the input is
-read. This is an upper bound, not a lower-bound claim. In rational bit
+read. In rational bit
 arithmetic, the arithmetic-operation count must additionally include
 the cost of exact number operations.
 
@@ -816,28 +828,14 @@ of the resulting values. Relative error in $H$ need not give useful
 relative error in $Q$ or its leading coefficient. The reduction is exact,
 not approximation preserving.
 
-\paragraph{Precise overall claim.}
-The permanent is recoverable from polynomially many exact hypervolume
-evaluations on an explicit anchored family, and also from exact ordinary
-$\ell_1$-magnitude evaluations on a related family. Consequently a
-permanent arithmetic lower bound transfers to their total exact
-arithmetic complexity, and hence to Klee measure. In particular,
-$\VP_{\R}\ne\VNP_{\R}$ excludes polynomial-size circuit families.
-This argument does
-not settle $\mathrm P$ versus $\mathrm{NP}$, invoke ETH, or supply a
-fixed-dimensional optimality theorem.
-
-\section{Discussion: conditional status and novelty}
+\section{Discussion}
 \label{sec:discussion}
 
-\subsection{The conditional conclusion and the recent preprint}
-
-The main lower-bound conclusion in this report is conditional on
-$\VP_{\R}\ne\VNP_{\R}$. The reductions and exact identities are
-unconditional. Claude (Anthropic), \emph{VP $\ne$ VNP over every field},
-posted on 23 November 2026, claims this separation and remains in
-preprint status \cite{Claude2026,ClaudeRepo}. We cite it as a preprint
-and keep the lower-bound corollaries explicitly conditional.
+Claude (Anthropic), \emph{VP $\ne$ VNP over every field}, announced
+on 23 November 2026, remains in preprint status \cite{Claude2026}.
+The lower-bound corollaries above are conditional on
+$\VP_{\R}\ne\VNP_{\R}$; the reductions and exact identities
+are unconditional.
 
 That preprint also states the stronger quantitative premise
 \begin{equation}
@@ -846,7 +844,7 @@ That preprint also states the stronger quantitative premise
  \quad\text{for all sufficiently large }r,
  \tag{A}\label{eq:announced}
 \end{equation}
-for some $c>0$ \cite{Claude2026,ClaudeStatement}. Assuming this
+for some $c>0$ \cite{Claude2026}. Assuming this
 specific premise, \eqref{eq:circuit-transfer} and
 \eqref{eq:mag-transfer} yield
 \begin{equation}
@@ -858,28 +856,11 @@ Indeed, subtracting $O(r^3)$ and dividing by $r+1$ in the transfer
 inequality preserves that rate. This numerical rate does \emph{not}
 follow from $\VP_{\R}\ne\VNP_{\R}$ alone. The preprint's separate
 approximate-circuit statement uses formal Laurent-series limits
-(border complexity); it is not a claim about randomized relative-error
-volume approximation \cite{ClaudeStatement}.
-
-\subsection{What can be said about novelty}
-
-The bit-model reduction in Section~\ref{sec:directions} follows from
-counting completeness and the displayed unit-cell argument; no novelty
-is claimed for that consequence. The conflict graph and partial
-permanent are explicitly documented by Briquel and Koiran's Theorem 5
-\cite{BriquelKoiran2009}.
-
-The precise positive-coordinate realization and geometric corollaries
-were not located as stated here in the cited primary sources and
-targeted searches completed on 25 November 2026. This does not establish
-priority. The additional geometric step is proved in
-Sections~\ref{sec:construction}--\ref{sec:transfer}; the search scope is
-recorded in \texttt{REFERENCE\_CHECKS.md}. We describe the contribution
-as an explicit geometric realization of a known algebraic construction
-and its conditional complexity consequence, without claiming a first proof.
+(border complexity). This is a different notion of approximation from
+the randomized relative-error volume estimates discussed above
+\cite{Claude2026}.
 
 \appendix
-\clearpage
 \section{The coefficient-extraction identity}
 \label{app:interpolation}
 
@@ -950,7 +931,7 @@ $(r+1)(d+1)=O(r^3)$ geometric queries and polynomial extra work. Hence
 the circuit and arithmetic/comparison lower bounds survive coordinate
 general position with polynomial overhead.
 
-\paragraph{Why the order of the two interpolations is necessary.}
+\paragraph{Order of coefficient extraction.}
 The perturbed boxes can extend beyond the original ambient box
 $C(A,t)$. Moreover,
 $\prod_e(1+ta_e)-H_r^\eta(A,t)$ need not have degree at most $r$ in
@@ -1048,7 +1029,7 @@ and the remaining singleton $\{j\}$ has potential one. Hence
  \label{eq:potential-one}
 \end{equation}
 
-\subsection{Why potential one identifies magnitude}
+\subsection{Identification of magnitude from the potential}
 
 For finite signed measures on $D$, define the energy
 \[
@@ -1185,46 +1166,7 @@ overhead is polynomial in $r$ and preserves the transferred
 superpolynomial lower bound for exact arithmetic/comparison algorithms
 that also use division.
 
-\section{Reference verification and scope}
-
-All bibliography entries were checked on 25 November 2026 against
-primary texts, author-hosted manuscripts, publisher or DOI metadata,
-or the cited versioned preprint records. The checks distinguish
-bibliographic accuracy and the content of a cited statement from an
-independent proof audit.
-
-\begin{itemize}
- \item Valiant's counting theorem is Theorem 1 of the 1979
- \emph{Theoretical Computer Science} paper; the characteristic-two
- observation appears with Theorem 3. Algebraic completeness is
- Theorem 2 of his separate STOC 1979 paper.
- \item Bringmann--Friedrich's Theorem 1 and its proof use
- origin-anchored boxes with upper coordinates in $\{1,2\}$.
- Their union approximation bound also supports the stated box case.
- \item Briquel--Koiran's Section 3, especially Theorems 3 and 5
- (author manuscript pp.~6--7), contains the partial permanent and
- the same row/column conflict graph.
- \item Chan's abstract and introduction explicitly fix the dimension.
- The 2025 SoCG paper's Theorem 2 gives the stated approximation bound;
- its lower bound is for oracle access to objects.
- \item The magnitude projection formula is Theorem 3.3 of
- arXiv:2604.18147v1. Appendix~\ref{app:magnitude} supplies a direct
- kernel proof for the box unions used here.
- \item The Claude preprint's title, author attribution, version date,
- quantitative claim, and formal circuit definitions were checked in
- the linked primary records. Repository references are pinned to
- the inspected commit. The report treats the work as a preprint
- and keeps its lower-bound conclusions conditional.
-\end{itemize}
-
-The repository's \texttt{REFERENCE\_CHECKS.md} records source links,
-verified passages, and the scope of the novelty search. The Hexagon
-identifier is not an arXiv identifier. The preprint's full proof and
-Lean development have not been independently audited here.
-
 \clearpage
-\phantomsection
-\addcontentsline{toc}{section}{References}
 \begin{thebibliography}{99}
 \interlinepenalty=10000
 
@@ -1291,22 +1233,6 @@ Claude (Anthropic).
 Preprint, version 1, 23 November 2026.
 \href{https://hexagonmath.org/2611.00954v1}{Versioned primary posting at Hexagon}.
 \href{https://github.com/anthropics/formal-math/tree/11b6c7e3c927df2658f513b6b68ea7f8929c62c5/vp-vnp}{Paper and Lean formalization}.
-Preprint status and statement checked 25 November 2026.
-The stronger quantitative premise (A) is discussed separately.
-
-\bibitem{ClaudeRepo}
-Anthropic.
-\emph{VP $\ne$ VNP over every field: repository README}.
-\href{https://raw.githubusercontent.com/anthropics/formal-math/11b6c7e3c927df2658f513b6b68ea7f8929c62c5/vp-vnp/README.md}{Primary repository README}.
-Accessed 25 November 2026.
-
-\bibitem{ClaudeStatement}
-Anthropic.
-\emph{Statement.lean: definitions and statements for the permanent and
-Hamiltonian cycle arithmetic lower bounds}.
-In the formal-math repository.
-\href{https://raw.githubusercontent.com/anthropics/formal-math/11b6c7e3c927df2658f513b6b68ea7f8929c62c5/vp-vnp/Statement.lean}{Formal theorem definitions}.
-Accessed 25 November 2026.
 
 \end{thebibliography}
 \end{document}
