@@ -50,7 +50,7 @@ through the Permanent}
 Licensed under \href{https://creativecommons.org/licenses/by/4.0/}{CC BY 4.0}.}\\[0.35em]
 \normalsize Faculty of Information Technology\\
 \normalsize University of Jyv\"askyl\"a}
-\date{25 November 2026}
+\date{26 November 2026}
 
 \begin{document}
 \maketitle
@@ -87,6 +87,13 @@ corner is an objective vector, and the union is the region dominated
 by at least one of these vectors. Figure~\ref{fig:boxes} shows both
 constructions. Their similarity is useful: an algorithm for arbitrary
 boxes also applies to anchored boxes.
+
+In multiobjective optimization, this volume can be used to compare
+finite sets of objective vectors. The common reference point gives
+their unions more structure than arbitrary collections of boxes. It is
+therefore natural to ask whether that structure permits exact volume
+computation with polynomial cost in both the number of vectors and the
+number of objectives. This question motivates the present paper.
 
 \begin{figure}[tbp]
 \centering
@@ -129,6 +136,11 @@ The proofs are self-contained apart from the cited counting and
 algebraic completeness theorems.
 
 \subsection{Definitions and computational models}
+
+Before discussing reductions, we specify what an input is and how the
+cost of a computation is measured. These choices matter: counting
+integer objects and evaluating a formal polynomial are related tasks,
+but a lower bound for one does not automatically settle the other.
 
 For maximization, let $P=\{p^1,\ldots,p^n\}\subseteq\R_{\ge0}^d$ and use
 the reference point $0=(0,\ldots,0)$. Write
@@ -173,6 +185,12 @@ evaluations and arithmetic operations. Our reduction uses the latter.
 
 \section{The permanent and the underlying field}
 \label{sec:binary}
+
+We begin with a distinction that will be used throughout the argument.
+The permanent has the same defining expression over different fields,
+but its computational properties depend on the arithmetic in which it
+is evaluated. In particular, a matrix whose entries are zero or one
+need not be a matrix evaluated over the two-element field.
 
 The permanent of an $r\times r$ matrix is
 \begin{equation}
@@ -220,6 +238,12 @@ the formal-polynomial reduction.
 
 \section{Counting complexity of hypervolume}
 \label{sec:bf}
+
+Next we recall how a volume can encode a count. The construction below
+is useful background for the weighted construction later in the paper:
+each small cell represents a choice, and a box covers the cells that
+violate a prescribed condition. Here all relevant cells have unit
+volume, so the resulting volume is an integer count.
 
 Bringmann and Friedrich prove $\#\mathrm P$ hardness using boxes anchored
 at the origin with upper corners in $\{1,2\}^d$
@@ -277,6 +301,14 @@ bit algorithms.
 
 \section{Reductions and related algebraic constructions}
 \label{sec:directions}
+
+We now consider the relation with the permanent more closely. There
+are two questions to distinguish. Can a permanent oracle be used to
+compute Klee measure? Conversely, can a volume oracle be used to compute
+the permanent? Both directions are meaningful, but it is the second
+that transfers a permanent lower bound to volume computation. We first
+explain the bit-model relation, then identify the algebraic construction
+needed for the arithmetic argument.
 
 \subsection{Klee measure reduces to the permanent in the bit model}
 
@@ -351,6 +383,112 @@ of Briquel and Koiran.
 
 \section{Encoding matchings by a hypervolume residual}
 \label{sec:construction}
+
+The task is now geometric: how can a union of anchored boxes distinguish
+a matching from an arbitrary selection of matrix entries? We will use
+one coordinate for each permitted entry. A choice between two intervals
+on that axis records whether the entry is selected. The boxes will
+cover selections containing a conflict, leaving the matchings in the
+complement inside an enclosing box. We first examine this mechanism
+in three dimensions, where it can be drawn explicitly.
+
+\subsection{A three-dimensional example}
+\label{sec:3d-example}
+
+Consider the matrix
+\[
+ A=\begin{pmatrix}a&b\\c&0\end{pmatrix},\qquad a,b,c>0.
+\]
+We omit the position whose entry is fixed at zero. There are therefore
+three permitted positions, represented by the coordinates
+$(x_a,x_b,x_c)$. Selecting both $a$ and $b$ creates a conflict in the
+first row; selecting both $a$ and $c$ creates a conflict in the first
+column. The entries $b$ and $c$ are compatible, since they lie in
+different rows and different columns. This sparse example has three
+coordinates; a general $2\times2$ matrix will require four.
+
+For the first picture, set $a=b=c=1$ and take the enclosing cube
+$C=[0,2]^3$. Split each axis at $1$. A coordinate in $[0,1]$ means
+that its entry is selected, and a coordinate in $(1,2]$ means that
+it is not selected. Thus the eight unit cells of $C$ represent the
+eight subsets of $\{a,b,c\}$. Here these letters label matrix positions
+as well as their weights. Shared cell boundaries have zero volume and
+do not affect any of the calculations.
+
+To cover the selections containing a conflicting pair, introduce
+\begin{equation}
+ \begin{aligned}
+ B_{ab}&=[0,1]\times[0,1]\times[0,2],\\
+ B_{ac}&=[0,1]\times[0,2]\times[0,1].
+ \end{aligned}
+ \label{eq:3d-boxes}
+\end{equation}
+The box $B_{ab}$ requires $a$ and $b$ to be selected and leaves the
+choice of $c$ unrestricted. It therefore covers the two cells for
+$\{a,b\}$ and $\{a,b,c\}$. Similarly, $B_{ac}$ covers the cells for
+$\{a,c\}$ and $\{a,b,c\}$. Both boxes have the origin as a corner.
+Their union volume is consequently the hypervolume indicator for the
+two objective vectors $(1,1,2)$ and $(1,2,1)$, with reference point
+$(0,0,0)$ and maximization.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{figures/hypervolume_matching_3d.pdf}
+\caption{The three-dimensional matching construction in the unit case.
+The orange union consists of the three cells containing a conflicting
+pair. Its complement inside the same enclosing cube consists of the
+five blue cells, one for each matching. A lower coordinate interval
+means that the corresponding entry is selected. The two panels use
+the same axes and enclosing cube.}
+\label{fig:matching-3d}
+\end{figure}
+
+Each box in \eqref{eq:3d-boxes} has volume $2$, and their intersection
+is the unit cube $[0,1]^3$. Hence the covered volume is
+\[
+ H=2+2-1=3.
+\]
+The uncovered volume is $Q=8-3=5$. As shown in
+Figure~\ref{fig:matching-3d}, its cells represent exactly
+\[
+ \varnothing,\quad \{a\},\quad \{b\},\quad \{c\},\quad \{b,c\}.
+\]
+These are the five matchings. Only $\{b,c\}$ is perfect: it uses one
+entry in each of the two rows and each of the two columns.
+
+We now restore the weights and introduce a positive parameter $t$.
+For an entry of weight $w$, replace the selected interval by $[0,tw]$
+and the unselected interval by $(tw,1+tw]$. Their lengths are $tw$ and
+$1$, respectively. The enclosing box and conflict boxes become
+\[
+ \begin{aligned}
+ C(t)&=[0,1+ta]\times[0,1+tb]\times[0,1+tc],\\
+ B_{ab}(t)&=[0,ta]\times[0,tb]\times[0,1+tc],\\
+ B_{ac}(t)&=[0,ta]\times[0,1+tb]\times[0,tc].
+ \end{aligned}
+\]
+The pattern of covered and uncovered cells is unchanged. The five
+matching cells now have volumes $1$, $ta$, $tb$, $tc$, and $t^2bc$.
+Writing $H(t)=\lambda_3(B_{ab}(t)\cup B_{ac}(t))$, we obtain
+\begin{equation}
+ \begin{aligned}
+ Q(t)&=(1+ta)(1+tb)(1+tc)-H(t)\\
+     &=1+t(a+b+c)+t^2bc.
+ \end{aligned}
+ \label{eq:3d-residual}
+\end{equation}
+The power of $t$ records how many entries have been selected. In
+particular, the coefficient of $t^2$ is $bc=\per(A)$. Note that the
+hypervolume query returns the covered volume $H(t)$; the matching
+polynomial appears only after subtracting it from the enclosing
+volume. This example explains the encoding. The lower bound will use
+the same construction in a dimension that grows with the matrix size.
+
+\subsection{The general construction}
+
+We now keep all positions of an $r\times r$ matrix and apply the same
+rule to every conflicting pair. The following notation records the
+positions, their conflicts, and the resulting boxes.
 
 Let $r\ge2$ and $E=[r]\times[r]$. We regard a matrix position
 $e=(i,j)$ as an edge between row $i$ and column $j$. Distinct positions
@@ -450,6 +588,10 @@ $Q_r$, after cancellation, not to the queried hypervolume $H_r$.
 
 \subsection{A numerical example in four dimensions}
 
+The three-dimensional picture omitted one zero entry. To see the full
+construction for a matrix with all entries positive, we next give a
+$2\times2$ example and compute the volumes needed for interpolation.
+
 Take
 \[
  A=\begin{pmatrix}2&3\\5&7\end{pmatrix},\qquad
@@ -489,6 +631,13 @@ $t$ & Ambient volume & Hypervolume $H_2(A,t)$ & Residual $Q_2(A,t)$\\
 
 \section{Transferring the arithmetic lower bound}
 \label{sec:transfer}
+
+The geometric construction has produced a polynomial whose leading
+coefficient is the permanent. It remains to recover that coefficient
+using only polynomially many exact volume evaluations and arithmetic
+operations. The next formula does this with $r+1$ positive values of
+$t$. Once the formula is available, a small circuit for the constructed
+hypervolume would give a small circuit for the permanent.
 
 \begin{lemma}[Leading coefficient from positive evaluation points]
 \label{lem:interpolation}
@@ -531,6 +680,11 @@ Theorem~\ref{thm:matching} identifies the output with $\per_r(A)$.
 The geometric identity for positive inputs is a polynomial identity,
 so the resulting circuit computes the formal permanent.
 \end{proof}
+
+Note that Theorem~\ref{thm:transfer} assumes no complexity-class
+separation. It describes how to compute one polynomial from another.
+The assumption $\VP_{\R}\ne\VNP_{\R}$ enters only in the following
+lower-bound consequence.
 
 \begin{corollary}[Conditional hypervolume circuit lower bound]
 \label{cor:hv-lower}
@@ -577,6 +731,15 @@ zero.
 
 \section{Ordinary \texorpdfstring{$\ell_1$}{l1} magnitude}
 \label{sec:magnitude}
+
+We turn next to a related measure of the dominated region. Ordinary
+$\ell_1$ magnitude includes contributions from lower-dimensional
+projections as well as the full-dimensional volume. At first this
+suggests many separate volume computations. The aim of this section
+is to show that, for the anchored unions considered here, a simple
+change of upper corners combines those contributions into one
+hypervolume evaluation. This also allows the permanent reduction to
+be carried over to magnitude.
 
 Equip $D(P)$ with the distance
 $d_1(x,y)=\sum_i|x_i-y_i|$. Magnitude uses the similarity kernel
@@ -728,6 +891,12 @@ Their common leading coefficient is the permanent.
 \section{Consequences for symbolic representations}
 \label{sec:primitives}
 
+A symbolic method may describe a volume by a short list of objects
+rather than immediately evaluating a number. Does a short description
+also give an efficient exact computation? To answer this question, we
+must account for the work needed to construct the objects and to
+evaluate them. The following bounds make those costs explicit.
+
 Suppose a symbolic scheme evaluates $H_r$ exactly on the constructed
 positive parameter domain. Use uniform worst-case bounds over that
 domain: $B(r)$ for its construction cost in arithmetic gates, $S(r)$
@@ -768,6 +937,12 @@ rounding require a different simulation and are outside this argument.
 
 \section{Exact algorithms and approximation}
 \label{sec:limits}
+
+To interpret the lower bound, we should place it beside known
+algorithms. Two distinctions are especially relevant: whether the
+dimension is fixed, and whether the answer must be exact. We discuss
+these in turn, since the reduction treats growing dimension and exact
+evaluation together.
 
 \subsection{Exact algorithms and fixed dimension}
 
@@ -828,8 +1003,16 @@ of the resulting values. Relative error in $H$ need not give useful
 relative error in $Q$ or its leading coefficient. The reduction is exact,
 not approximation preserving.
 
-\section{Discussion}
+\section{Discussion and conclusions}
 \label{sec:discussion}
+
+The construction links geometry and algebra through a simple rule:
+cover selections containing a conflict and retain the matchings as
+uncovered cells. Giving each selected interval length $ta_e$ turns
+their total volume into the partial permanent. Interpolation then
+recovers the permanent with polynomial overhead. Thus the geometric
+identities and reductions give a precise way to transfer arithmetic
+lower bounds, once such a lower bound for the permanent is assumed.
 
 Claude (Anthropic), \emph{VP $\ne$ VNP over every field}, announced
 on 23 November 2026, remains in preprint status \cite{Claude2026}.
@@ -838,12 +1021,15 @@ $\VP_{\R}\ne\VNP_{\R}$; the reductions and exact identities
 are unconditional.
 
 That preprint also states the stronger quantitative premise
+\begingroup
+\renewcommand*{\theHequation}{announced-permanent}
 \begin{equation}
  \size_{\R}(\per_r)>
  r^{c(\log_2 r)^{1/3}}=2^{c(\log_2 r)^{4/3}}
  \quad\text{for all sufficiently large }r,
  \tag{A}\label{eq:announced}
 \end{equation}
+\endgroup
 for some $c>0$ \cite{Claude2026}. Assuming this
 specific premise, \eqref{eq:circuit-transfer} and
 \eqref{eq:mag-transfer} yield
@@ -859,6 +1045,17 @@ approximate-circuit statement uses formal Laurent-series limits
 (border complexity). This is a different notion of approximation from
 the randomized relative-error volume estimates discussed above
 \cite{Claude2026}.
+
+For multiobjective optimization, the lower-bound result is primarily
+of theoretical value. The Hypervolume Indicator is normally used
+with a fixed number of objectives, while the number of objective
+vectors may vary. In the constructed family, however, the number of
+objectives is $d=r^2$ and grows with the matrix order. The result
+therefore explains a limitation of exact computation when both
+parameters are allowed to grow; it does not determine the best
+running time for a fixed number of objectives. Improving exact
+algorithms in small fixed dimensions remains a separate and
+practically relevant problem.
 
 \appendix
 \section{The coefficient-extraction identity}
