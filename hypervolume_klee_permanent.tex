@@ -57,21 +57,37 @@ Licensed under \href{https://creativecommons.org/licenses/by/4.0/}{CC BY 4.0}.}\
 \maketitle
 
 \begin{abstract}
-The Hypervolume Indicator is the volume of a union of boxes anchored at
-a common reference point; the Klee Measure Problem allows arbitrary
-axis-aligned boxes. We give an explicit positive-coordinate construction
-in $d=r^2$ dimensions, using $n=r^2(r-1)$ boxes, whose residual volume
-is the partial permanent of a weighted matrix. Its degree-$r$ coefficient
-is the permanent. Interpolation gives an unconditional arithmetic
-reduction from the permanent to this hypervolume polynomial. Consequently,
-\emph{conditional on $\VP_{\R}\ne\VNP_{\R}$}, the resulting family has
-no polynomial-size arithmetic circuits; the obstruction also applies
-to exact Klee-measure computation in the stated arithmetic model.
-We relate this construction to earlier counting and algebraic results,
-explain the reverse reduction for rational inputs, and give exact
-connections with ordinary $\ell_1$ magnitude. A recent announcement
-of $\VP\ne\VNP$ remains in preprint status \cite{Claude2026};
-the lower-bound results here are conditional.
+The Hypervolume Indicator measures the volume of a union of
+axis-aligned boxes that share a reference corner. The Klee Measure
+Problem permits arbitrary axis-aligned boxes. We study the difficulty
+of computing these volumes exactly when both the number of boxes and
+the dimension are allowed to grow.
+
+The connection with the permanent is made through matchings. For an
+$r\times r$ matrix with positive entries, we construct $r^2(r-1)$
+anchored boxes in $r^2$ dimensions. The boxes cover the cells that
+represent selections of entries containing a row or column conflict.
+The uncovered part of an enclosing box therefore represents all
+matchings, including those that are not perfect. A parameter $t$
+records the size of each matching. The uncovered volume is then a
+polynomial in $t$, whose coefficient of $t^r$ is the permanent.
+Interpolation recovers this coefficient from $r+1$ exact hypervolume
+evaluations with polynomial additional arithmetic work.
+
+This reduction is unconditional. It shows that polynomial-size
+arithmetic circuits for the constructed hypervolume family would give
+polynomial-size circuits for the permanent. Hence, \emph{if
+$\VP_{\R}\ne\VNP_{\R}$}, no such circuit family exists. The same
+obstruction applies to exact Klee-measure computation in the stated
+arithmetic model, because every anchored instance is also a
+Klee-measure instance. The result concerns growing dimension and does
+not determine the best running time for a fixed number of objectives.
+
+We relate the construction to earlier counting and algebraic results,
+give the reverse reduction for rational inputs in the bit model, and
+derive exact connections with ordinary $\ell_1$ magnitude. The recent
+$\VP\ne\VNP$ announcement remains a preprint \cite{Claude2026};
+our lower-bound conclusions remain conditional.
 \end{abstract}
 
 \section{Introduction}
@@ -96,7 +112,7 @@ therefore natural to ask whether that structure permits exact volume
 computation with polynomial cost in both the number of vectors and the
 number of objectives. This question motivates the present paper.
 
-\begin{figure}[tbp]
+\begin{figure}[htbp]
 \centering
 \includegraphics[width=\linewidth]{figures/klee_hypervolume_2d.pdf}
 \caption{Two-dimensional instances. Left: Klee measure is the area of
@@ -116,8 +132,16 @@ related algebraic question. We consider computations formed from
 additions and multiplications, allowing intermediate results to be
 reused, and ask whether their size can be polynomially bounded.
 
-The connection is made through the permanent. We construct a union of
-anchored boxes for which the part of an enclosing box left uncovered
+The recent announcement of $\VP\ne\VNP$ \cite{Claude2026} prompted
+this investigation. I had previously noticed a connection between
+the magnitude of dominated sets and the permanent, but had not pursued
+$\VNP$-hardness for these geometric quantities: with the
+$\#\mathrm P$-hardness of hypervolume already
+established, it seemed to add little. Transferring arithmetic lower
+bounds gave this connection a new motivation.
+
+We construct a union of anchored boxes for which the part of an
+enclosing box left uncovered
 represents matchings in a bipartite graph. A parameter $t$ records the
 size of a matching. The residual volume is therefore a polynomial in
 $t$, and its coefficient of highest possible degree is the permanent.
