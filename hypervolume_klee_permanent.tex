@@ -14,8 +14,8 @@
  citecolor=blue!45!black,urlcolor=blue!45!black,
  pdftitle={Arithmetic Lower Bounds for the Time Complexity of the Hypervolume Indicator and Klee Measure Problem through the Permanent},
  pdfauthor={Michael T.M. Emmerich},
- pdfkeywords={hypervolume indicator, Klee measure problem, permanent, arithmetic complexity, CC BY 4.0},
- pdfsubject={Technical Report: Reduction from the permanent to hypervolume and Klee measure; conditional arithmetic lower bounds}]{hyperref}
+ pdfkeywords={Hypervolume Indicator Computation, HVC, Klee Measure Problem, KMP, permanent, arithmetic complexity, CC BY 4.0},
+ pdfsubject={Technical Report: Reductions from the permanent to Hypervolume Indicator Computation and the Klee Measure Problem; conditional arithmetic lower bounds}]{hyperref}
 \pagestyle{plain}
 \setlength{\parskip}{0.25em}
 \setlength{\emergencystretch}{2em}
@@ -57,11 +57,11 @@ Licensed under \href{https://creativecommons.org/licenses/by/4.0/}{CC BY 4.0}.}\
 \maketitle
 
 \begin{abstract}
-The Hypervolume Indicator measures the volume of a union of
-axis-aligned boxes that share a reference corner. The Klee Measure
-Problem permits arbitrary axis-aligned boxes. We study the difficulty
-of computing these volumes exactly when both the number of boxes and
-the dimension are allowed to grow.
+Hypervolume Indicator Computation (HVC) asks for the volume of a union
+of axis-aligned boxes that share a reference corner. The Klee Measure
+Problem (KMP) asks for the union volume of arbitrary axis-aligned boxes.
+We study the difficulty of solving these problems exactly when both
+the number of boxes and the dimension are allowed to grow.
 
 The connection with the permanent is made through matchings. For an
 $r\times r$ matrix with positive entries, we construct $r^2(r-1)$
@@ -71,16 +71,16 @@ The uncovered part of an enclosing box therefore represents all
 matchings, including those that are not perfect. A parameter $t$
 records the size of each matching. The uncovered volume is then a
 polynomial in $t$, whose coefficient of $t^r$ is the permanent.
-Interpolation recovers this coefficient from $r+1$ exact hypervolume
-evaluations with polynomial additional arithmetic work.
+Interpolation recovers this coefficient by solving $r+1$ HVC instances,
+with polynomial additional arithmetic work.
 
 This reduction is unconditional. It shows that polynomial-size
-arithmetic circuits for the constructed hypervolume family would give
+arithmetic circuits solving the constructed HVC instances would give
 polynomial-size circuits for the permanent. Hence, \emph{if
 $\VP_{\R}\ne\VNP_{\R}$}, no such circuit family exists. The same
-obstruction applies to exact Klee-measure computation in the stated
+obstruction applies to solving the KMP exactly in the stated
 arithmetic model, because every anchored instance is also a
-Klee-measure instance. The result concerns growing dimension and does
+KMP instance. The result concerns growing dimension and does
 not determine the best running time for a fixed number of objectives.
 
 We relate the construction to earlier counting and algebraic results,
@@ -93,13 +93,16 @@ our lower-bound conclusions remain conditional.
 \section{Introduction}
 \label{sec:models}
 
-In two dimensions, the Klee Measure Problem asks for the area covered
+In two dimensions, the Klee Measure Problem (KMP) asks for the area covered
 by finitely many axis-aligned rectangles. A point covered by several
 rectangles contributes to the area only once. In higher dimensions,
-rectangles are replaced by boxes and area by volume.
+rectangles are replaced by boxes and area by volume. We use KMP to
+denote this computational problem; the union volume is the value to be
+computed.
 
-The Hypervolume Indicator is a special case. All boxes have one common
-corner, called the reference point. For maximization, each opposite
+Hypervolume Indicator Computation (HVC) is the special case in which
+all boxes have one common corner, called the reference point. The
+volume to be computed is the Hypervolume Indicator. For maximization, each opposite
 corner is an objective vector, and the union is the region dominated
 by at least one of these vectors. Figure~\ref{fig:boxes} shows both
 constructions. Their similarity is useful: an algorithm for arbitrary
@@ -115,9 +118,9 @@ number of objectives. This question motivates the present paper.
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\linewidth]{figures/klee_hypervolume_2d.pdf}
-\caption{Two-dimensional instances. Left: Klee measure is the area of
+\caption{Two-dimensional instances. Left: the KMP asks for the area of
 the union of arbitrary axis-aligned rectangles. Right: for maximization,
-the Hypervolume Indicator is the area of rectangles joining the
+HVC asks for the area of the union of rectangles joining the
 reference point $0$ to the objective vectors $p^1,p^2,p^3$.
 The shaded union counts each overlap once.}
 \label{fig:boxes}
@@ -136,7 +139,7 @@ The recent announcement of $\VP\ne\VNP$ \cite{Claude2026} prompted
 this investigation. I had previously noticed a connection between
 the magnitude of dominated sets and the permanent, but had not pursued
 $\VNP$-hardness for these geometric quantities: with the
-$\#\mathrm P$-hardness of hypervolume already
+$\#\mathrm P$-hardness of HVC already
 established, it seemed to add little. Transferring arithmetic lower
 bounds gave this connection a new motivation.
 
@@ -150,11 +153,11 @@ are due to Briquel and Koiran \cite{BriquelKoiran2009}. Here this
 algebraic construction is realized by positive-coordinate boxes.
 
 For an $r\times r$ matrix, the construction uses $r^2(r-1)$ boxes in
-$r^2$ dimensions. The permanent is recovered from $r+1$ hypervolume
-evaluations by interpolation. This reduction is unconditional.
+$r^2$ dimensions. The permanent is recovered by interpolation from
+$r+1$ calls to an HVC oracle. This reduction is unconditional.
 Assuming $\VP_{\R}\ne\VNP_{\R}$, it follows that the constructed
 hypervolume family has no polynomial-size arithmetic circuits. The
-same conclusion applies to exact Klee measure in the stated model.
+same conclusion applies to solving the KMP exactly in the stated model.
 We also give the reverse reduction for rational inputs in the bit
 model, and corresponding identities for ordinary $\ell_1$ magnitude.
 The proofs are self-contained apart from the cited counting and
@@ -177,8 +180,9 @@ the reference point $0=(0,\ldots,0)$. Write
 \end{equation}
 Thus $D(P)$ contains the points dominated by \emph{at least one} input
 vector. It is downward closed: $0\le x\le y\in D(P)$ implies $x\in D(P)$.
-Klee's measure problem permits arbitrary axis-aligned boxes
-$\prod_i[\ell_i,u_i]$. Hypervolume is its anchored special case.
+The KMP permits arbitrary axis-aligned boxes
+$\prod_i[\ell_i,u_i]$. HVC is its anchored special case; its output is
+the value $\HV_d(P)$ defined in \eqref{eq:hv}.
 
 We distinguish three measures of complexity.
 \begin{enumerate}
@@ -261,7 +265,7 @@ all positive real parameters: two real polynomials agreeing on a
 nonempty open set are identical. Positivity therefore causes no loss in
 the formal-polynomial reduction.
 
-\section{Counting complexity of hypervolume}
+\section{Counting complexity of HVC}
 \label{sec:bf}
 
 Next we recall how a volume can encode a count. The construction below
@@ -273,7 +277,7 @@ volume, so the resulting volume is an integer count.
 Bringmann and Friedrich prove $\#\mathrm P$ hardness using boxes anchored
 at the origin with upper corners in $\{1,2\}^d$
 \cite[Theorem 1]{BringmannFriedrich}. This is already a hardness proof for
-the hypervolume indicator when $d$ is part of the input.
+HVC when $d$ is part of the input.
 
 The reduction has the following form. For a monotone CNF
 $F(x)=\bigwedge_C\bigvee_{i\in C}x_i$, introduce a corner
@@ -298,7 +302,7 @@ of the reduction; it is not a parsimonious equality with the satisfying
 assignment count. A polynomial-time exact bit algorithm would therefore
 imply $\mathrm{FP}=\#\mathrm P$, and hence $\mathrm P=\mathrm{NP}$.
 This does not supply an unconditional exponential running-time bound.
-Raw rational-valued hypervolume should not itself be called a
+The rational-valued output function of HVC should not itself be called a
 $\#\mathrm P$ function without specifying an integer scaling convention.
 
 \begin{table}[htbp]
@@ -329,15 +333,15 @@ bit algorithms.
 
 We now consider the relation with the permanent more closely. There
 are two questions to distinguish. Can a permanent oracle be used to
-compute Klee measure? Conversely, can a volume oracle be used to compute
+solve the KMP? Conversely, can a volume oracle be used to compute
 the permanent? Both directions are meaningful, but it is the second
 that transfers a permanent lower bound to volume computation. We first
 explain the bit-model relation, then identify the algebraic construction
 needed for the arithmetic argument.
 
-\subsection{Klee measure reduces to the permanent in the bit model}
+\subsection{The KMP reduces to the permanent in the bit model}
 
-For binary-encoded rational endpoints, exact Klee measure is computable
+For binary-encoded rational endpoints, the KMP can be solved exactly
 using polynomially many calls to an integer permanent oracle. This is a
 consequence of Valiant's counting completeness theorem
 \cite[Theorem 1]{ValiantCounting}, with the following explicit additional
@@ -363,11 +367,8 @@ directly. Thus the scaled union volume is a $\#\mathrm P$ function.
 An oracle reduction to the zero--one permanent computes this integer;
 division by $\prod_i q_i$ recovers the original rational volume.
 
-This establishes
-\[
- \text{rational Klee measure}\ \le_T^{\mathrm{poly}}\
- \text{integer permanent}.
-\]
+This establishes a polynomial-time Turing reduction from the KMP with
+rational endpoints to the problem of computing the integer permanent.
 This bit-model reduction uses counting completeness. A global
 arithmetic-circuit representation for arbitrary real box coordinates
 requires a different argument.
@@ -376,8 +377,8 @@ requires a different argument.
 
 The counting hardness in Section~\ref{sec:bf} already implies a
 polynomial-time counting-oracle reduction in the other direction,
-from the zero--one permanent to anchored Klee measure. This does not
-by itself transfer lower bounds for \emph{formal polynomials}.
+from the zero--one permanent to HVC, the anchored special case of the KMP.
+This does not by itself transfer lower bounds for \emph{formal polynomials}.
 For that purpose, Section~\ref{sec:construction} realizes a weighted
 polynomial on a positive open domain and Section~\ref{sec:transfer}
 uses arithmetic interpolation. More precisely, the two steps are
@@ -385,11 +386,12 @@ uses arithmetic interpolation. More precisely, the two steps are
  \begin{aligned}
  \text{permanent polynomial}&\ \le_c\ H_r,\\
  \{\text{constructed anchored inputs}\}&\ \subseteq\
- \{\text{Klee-measure inputs}\}.
+ \{\text{KMP inputs}\}.
  \end{aligned}
 \]
 Here the last symbol denotes an inclusion of geometric instances,
-not an assertion that unrestricted Klee measure is one polynomial.
+not an assertion that the volume function for unrestricted KMP inputs
+is a single polynomial.
 
 \subsection{The partial permanent}
 
@@ -504,7 +506,7 @@ Writing $H(t)=\lambda_3(B_{ab}(t)\cup B_{ac}(t))$, we obtain
 \end{equation}
 The power of $t$ records how many entries have been selected. In
 particular, the coefficient of $t^2$ is $bc=\per(A)$. Note that the
-hypervolume query returns the covered volume $H(t)$; the matching
+HVC oracle returns the covered volume $H(t)$; the matching
 polynomial appears only after subtracting it from the enclosing
 volume. This example explains the encoding. The lower bound will use
 the same construction in a dimension that grows with the matrix size.
@@ -592,11 +594,11 @@ matching. These matchings correspond to permutations, giving
 Thus a cell is covered precisely when its selected positions contain
 a conflicting pair. The uncovered cells correspond to matchings.
 The subtraction from the ambient volume is the step that passes from
-these excluded selections to the matching polynomial; the hypervolume
-query itself still measures the union of anchored boxes.
+these excluded selections to the matching polynomial; the HVC oracle
+itself still returns the volume of the union of anchored boxes.
 
 \paragraph{Polynomial dependence on the parameters.}
-General hypervolume is piecewise polynomial in its corner coordinates.
+The hypervolume function is piecewise polynomial in its corner coordinates.
 Here every coordinate has two levels in a fixed order,
 $ta_e<1+ta_e$, on the whole positive parameter domain.
 Equation~\eqref{eq:matching} therefore identifies $H_r$ with a single
@@ -711,7 +713,7 @@ separation. It describes how to compute one polynomial from another.
 The assumption $\VP_{\R}\ne\VNP_{\R}$ enters only in the following
 lower-bound consequence.
 
-\begin{corollary}[Conditional hypervolume circuit lower bound]
+\begin{corollary}[Conditional circuit lower bound for HVC]
 \label{cor:hv-lower}
 If $\VP_{\R}\ne\VNP_{\R}$, the family $(H_r)$ does not have
 polynomially bounded arithmetic circuit size. Equivalently,
@@ -731,20 +733,20 @@ $\VP_{\R}=\VNP_{\R}$, contrary to the hypothesis.
 The parameters $r,d,n,nd$ are polynomially related along this family.
 \end{proof}
 
-\begin{corollary}[Conditional Klee-measure lower bound]
+\begin{corollary}[Conditional lower bound for the KMP]
 \label{cor:klee}
 If $\VP_{\R}\ne\VNP_{\R}$, no polynomial-size arithmetic-circuit
-family computes exact Klee measure on all instances of the form
+family solves the KMP exactly on all instances of the form
 \eqref{eq:corners}. Consequently no exact arithmetic/comparison
 algorithm with the operations covered in Appendix~\ref{app:branches}
 has running time polynomial in both the number of boxes and the
 dimension on all inputs.
 \end{corollary}
 
-Every general Klee-measure algorithm must handle these anchored
+Every algorithm for the general KMP must handle these anchored
 instances: their lower corners are zero. This conclusion does not
-assert identical optimal dimension dependence for arbitrary-box Klee
-measure and hypervolume. The class-separation assumption alone gives
+assert identical optimal dimension dependence for the KMP and HVC.
+The class-separation assumption alone gives
 no particular numerical superpolynomial rate; a stronger quantitative
 premise is considered only in the discussion.
 
@@ -763,7 +765,7 @@ projections as well as the full-dimensional volume. At first this
 suggests many separate volume computations. The aim of this section
 is to show that, for the anchored unions considered here, a simple
 change of upper corners combines those contributions into one
-hypervolume evaluation. This also allows the permanent reduction to
+HVC oracle call. This also allows the permanent reduction to
 be carried over to magnitude.
 
 Equip $D(P)$ with the distance
@@ -822,7 +824,7 @@ weighting measure whose kernel potential is one. For an interval, that
 weighting measure is $(\delta_0+\delta_a+\lambda|_{[0,a]})/2$; the two
 measures have the same total mass but different distributions.
 
-\subsection{A conversion requiring one hypervolume evaluation}
+\subsection{A conversion requiring one HVC oracle call}
 
 \begin{proposition}[Magnitude as transformed hypervolume]
 \label{prop:mag-hv}
@@ -848,7 +850,7 @@ Taking volumes and using \eqref{eq:magnitude} proves the identity.
 \end{proof}
 
 There is also a reverse exact evaluation reduction with $O(nd)$
-arithmetic operations and comparisons. For hypervolume, first discard
+arithmetic operations and comparisons. For HVC, first discard
 boxes with a zero side. If any boxes remain, set
 $b_i=\min_{p\in P}p_i>0$, $s_i=2/b_i$, and
 $p'_i=2(s_i p_i-1)$. All $p'_i\ge2$, and
@@ -861,8 +863,8 @@ follows by applying \eqref{eq:mag-hv} and rescaling coordinates.
 It is an evaluation reduction, not a global arithmetic projection in
 symbolic coordinates, because selecting the $b_i$ uses minima.
 
-Consequently, exact magnitude on these dominated sets and exact
-hypervolume have closely linked numerical complexity without explicitly
+Consequently, exact magnitude computation on these dominated sets and
+HVC have closely linked numerical complexity without explicitly
 computing all $2^d$ projected volumes. This does not make either problem
 uniformly polynomial in the number of objectives.
 
@@ -985,7 +987,7 @@ arithmetic, the arithmetic-operation count must additionally include
 the cost of exact number operations.
 
 For fixed $d$, Chan gives an $O_d(n^{d/3}\operatorname{polylog}n)$
-hypervolume algorithm and an $O_d(n^{d/2})$ Klee-measure algorithm for
+algorithm for HVC and an $O_d(n^{d/2})$ algorithm for the KMP, for
 $d\ge3$ \cite{Chan2013}. His paper assumes constant dimension; its
 notation does not specify a complete uniform dependence on $d$.
 
@@ -1011,16 +1013,16 @@ $\Pr[|\widehat V-V|\le\varepsilon V]\ge1-\delta$.
 For boxes, the Bringmann--Friedrich union algorithm gives
 $O(nd\varepsilon^{-2})$ time at constant success probability in its
 arithmetic/sampling model; independent repetitions give a logarithmic
-factor in $1/\delta$ \cite{BringmannFriedrich}. It applies to hypervolume
-because anchored boxes are boxes.
+factor in $1/\delta$ \cite{BringmannFriedrich}. It also gives an
+approximation scheme for HVC, because anchored boxes are boxes.
 
-The 2025 result on approximating Klee measure gives, for fixed $d$,
+The 2025 result on approximating the union volume in the KMP gives, for fixed $d$,
 $O_d((n+\varepsilon^{-2})\log^{2d+1}n)$ time at constant success
 probability. Its $\Omega(n/\varepsilon^2)$ lower bound concerns access
 to general objects through volume, sampling and membership oracles,
 not the full explicit corner representation of boxes
 \cite{BringmannEtAl2025}. That oracle lower bound therefore does not
-automatically become a lower bound for explicit hypervolume inputs.
+automatically become a lower bound for explicitly represented HVC inputs.
 
 There is no conflict with the exact reduction. Forming $Q=P-H$ subtracts
 large quantities, and coefficient extraction uses signed combinations
@@ -1072,8 +1074,8 @@ the randomized relative-error volume estimates discussed above
 \cite{Claude2026}.
 
 For multiobjective optimization, the lower-bound result is primarily
-of theoretical value. The Hypervolume Indicator is normally used
-with a fixed number of objectives, while the number of objective
+of theoretical value. HVC is normally performed
+for a fixed number of objectives, while the number of objective
 vectors may vary. In the constructed family, however, the number of
 objectives is $d=r^2$ and grows with the matrix order. The result
 therefore explains a limitation of exact computation when both
@@ -1345,7 +1347,7 @@ is a polynomial $g$ computed with $O(T+k)$ gates. Correctness gives
 $g=f$ on a nonempty open set, hence as a polynomial identity.
 \end{proof}
 
-To apply the lemma to a general hypervolume algorithm, compose its
+To apply the lemma to a general HVC algorithm, compose its
 input with \eqref{eq:corners}. These coordinates are polynomial
 expressions in the $r^2+1$ positive parameters, so the lemma applies
 on that parameter domain. If the algorithm is only promised coordinate
